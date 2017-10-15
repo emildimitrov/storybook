@@ -82,6 +82,21 @@ const propsFromPropTypes = type => {
   return props;
 };
 
+export const multiLineText = text => {
+  const arrayOfText = text.replace(/\r?\n|\r/g, '--newline--').split('--newline--');
+  const singleLine = arrayOfText.length < 2;
+  return singleLine
+    ? text
+    : arrayOfText.map((
+        lineOfText,
+        i // note: lineOfText is the closest we will get to a unique key
+      ) => (
+        <span key={lineOfText}>
+          {i > 0 && <br />} {lineOfText}
+        </span>
+      ));
+};
+
 export default function PropTable(props) {
   const { type, maxPropObjectKeys, maxPropArrayLength, maxPropStringLength } = props;
 
@@ -130,7 +145,7 @@ export default function PropTable(props) {
                 <PropVal val={row.defaultValue} {...propValProps} />
               )}
             </Td>
-            <Td bordered>{row.description}</Td>
+            <Td bordered>{multiLineText(row.description)}</Td>
           </tr>
         ))}
       </tbody>
